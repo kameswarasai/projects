@@ -1,1 +1,123 @@
+from tkinter import *
+import tkinter.font as tkFont
+root = Tk()
+root.geometry("400x400")
+root.title("Simple Calculator")
+root.rowconfigure(0,weight=1)
+root.rowconfigure(1,weight=2)
+root.columnconfigure(0, weight=1)
+
+current_expression = ""
+
+#Update display
+def update_display(value):
+    e.delete(0, END) 
+    e.insert(0, str(value))
+
+
+#Clicking function
+def button_click(number):
+    global current_expression
+    if current_expression == "0" and number != ".":
+        current_expression = str(number)
+    else:
+        current_expression += str(number)
+    update_display(current_expression)
+
+
+#Clear Screen
+def clear_expression():
+    global current_expression
+    current_expression = ""
+    update_display("0")
+
+def evaluate_expression():
+    global current_expression
+    try:
+        result = str(eval(current_expression))
+        update_display(result)
+        current_expression = result 
+    except Exception as ex:
+        update_display("Error")
+        current_expression = "" 
+        print(f"Calculation Error: {ex}")
+
+#Entry box
+e = Entry(root, width = 60, font = ("Consolas", 19, "bold"), bd = 4, justify="right")
+e.get()
+e.grid(row=0, padx = 40, pady = 40, sticky="new")
+e.insert(0, "0")
+
+#Creating Secondry Fram in row 1
+frame = Frame(root)
+frame.grid(row=1,sticky="news")
+ #column
+frame.columnconfigure(0, weight = 1)
+frame.columnconfigure(1, weight = 1)
+frame.columnconfigure(2, weight = 1)
+frame.columnconfigure(3, weight = 1)
+ #row
+frame.rowconfigure(0, weight = 1)
+frame.rowconfigure(1, weight = 1)
+frame.rowconfigure(2, weight = 1)
+frame.rowconfigure(3, weight = 1)
+
+
+#Calculator buttons
+btn_font = tkFont.Font(family="Arial", size=15, weight="bold")
+ #numbers
+one = Button(frame, text="1", font = btn_font, bd = 2, relief="raised", command = lambda : button_click("1"))
+one.grid(row=0, column=1, sticky="news")
+
+two = Button(frame, text="2", font = btn_font, bd = 2, relief="raised", command = lambda : button_click("2"))
+two.grid(row=0, column=2, sticky="news")
+
+three = Button(frame, text="3", font = btn_font, bd = 2, relief="raised", command = lambda : button_click("3"))
+three.grid(row=1, column=0, sticky="news")
+
+four = Button(frame, text="4", font = btn_font, bd = 2, relief="raised", command = lambda : button_click("4"))
+four.grid(row=1, column=1, sticky="news")
+
+five = Button(frame, text="5", font = btn_font, bd = 2, relief="raised", command = lambda : button_click("5"))
+five.grid(row=1, column=2, sticky="news")
+
+six = Button(frame, text="6", font = btn_font, bd = 2, relief="raised", command = lambda : button_click("6"))
+six.grid(row=2, column=0, sticky="news")
+
+seven = Button(frame, text="7", font = btn_font, bd = 2, relief="raised", command = lambda : button_click("7"))
+seven.grid(row=2, column=1, sticky="news")
+
+eight = Button(frame, text="8", font = btn_font, bd = 2, relief="raised", command = lambda : button_click("8"))
+eight.grid(row=2, column=2, sticky="news")
+
+nine = Button(frame, text="9", font = btn_font, bd = 2, relief="raised", command = lambda : button_click("9"))
+nine.grid(row=3, column=0, sticky="news")
+
+zero = Button(frame, text="0", font = btn_font, bd = 2, relief="raised", command = lambda : button_click("0"))
+zero.grid(row=3, column=1, sticky="news")
+
+ #clean button
+clean = Button(frame, text="Cl", font = btn_font, bd = 2, relief="raised", command =clear_expression)
+clean.grid(row=0, column=0, sticky="news")
+
+ #Arethemetic keys
+div = Button(frame, text="/", font = btn_font, bd = 2, relief="raised", command = lambda : button_click("/"))
+div.grid(row=0, column=3, sticky="news")
+
+mult = Button(frame, text="x", font = btn_font, bd = 2, relief="raised", command = lambda : button_click("*"))
+mult.grid(row=1, column=3, sticky="news")
+
+sub = Button(frame, text="-", font = btn_font, bd = 2, relief="raised", command = lambda : button_click("-"))
+sub.grid(row=2, column=3, sticky="news")
+
+add = Button(frame, text="+", font = btn_font, bd = 2, relief="raised", command = lambda : button_click("+"))
+add.grid(row=3, column=3, sticky="news")
+
+eq = Button(frame, text="=", font = btn_font, bd = 2, relief="raised", command = evaluate_expression)
+eq.grid(row=3, column=2, sticky="news")
+
+
+
+
+root.mainloop()
 

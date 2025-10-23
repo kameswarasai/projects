@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User</title>
+    <link rel="stylesheet" href="/static/admin.css">
+</head>
+<body>
+    <div class = "header">
+        <a href="{{ url_for('user_detail', user_id=user_id) }}"><button>Home</button></a>
+        <a href="{{ url_for('scores', user_id=user_id) }}"><button>Scores</button></a>
+        <a href="{{ url_for('user_summary', user_id=user_id) }}"><button>Summary</button></a>
+        <a href="{{ url_for('login') }}"><button>LogOut</button></a>
+
+
+        <div class = "left-head">
+            <form method="get" action="{{ url_for('user_summary', user_id=user_id) }}">
+                <input type="search" name="query" placeholder="Search..." required>
+                <button type="submit">Search</button>
+            </form>
+            <h4>{{user.full_name}}</h4>
+
+        </div>
+
+    </div>
+    <!-- Replace the existing content inside <body> -->
+<div class="summary-content">
+    <h2>Search Results for "{{ search_query }}"</h2>
+
+    <h3>Your Scores</h3>
+    {% if score_details %}
+    <table>
+        <tr>
+            <th>Quiz Name</th>
+            <th>Chapter</th>
+            <th>Subject</th>
+            <th>Score</th>
+            <th>Total Marks</th>
+            <th>Date</th>
+        </tr>
+        {% for score in score_details %}
+        <tr>
+            <td>{{ score.quiz_name }}</td>
+            <td>{{ score.chapter_name }}</td>
+            <td>{{ score.subject_name }}</td>
+            <td>{{ score.score }}</td>
+            <td>{{ score.total_marks }}</td>
+            <td>{{ score.date.strftime('%Y-%m-%d') }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p>No scores found matching your search.</p>
+    {% endif %}
+
+    <h3>Available Quizzes</h3>
+    {% if available_quizzes %}
+    <table>
+        <tr>
+            <th>Quiz Name</th>
+            <th>Chapter</th>
+            <th>Subject</th>
+            <th>Total Marks</th>
+            <th>Date</th>
+            <th>Action</th>
+        </tr>
+        {% for quiz in available_quizzes %}
+        <tr>
+            <td>{{ quiz.quiz_name }}</td>
+            <td>{{ quiz.chapter_name }}</td>
+            <td>{{ quiz.subject_name }}</td>
+            <td>{{ quiz.total_marks }}</td>
+            <td>{{ quiz.date.strftime('%Y-%m-%d') }}</td>
+            <td>
+                <a href="{{ url_for('start_quiz', quiz_id=quiz.quiz_id, user_id=user_id) }}">
+                    <button>Start Quiz</button>
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p>No quizzes found matching your search.</p>
+    {% endif %}
+</div>
+    
+    
+</body>
+</html>

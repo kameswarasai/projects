@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User</title>
+    <link rel="stylesheet" href="/static/admin.css">
+</head>
+<body>
+    <div class = "header">
+        <a href="{{ url_for('user_detail', user_id=user_id) }}"><button>Home</button></a>
+        <a href="{{ url_for('scores', user_id=user_id) }}"><button>Scores</button></a>
+        <a href="{{ url_for('user_summary', user_id=user_id) }}"><button>Summary</button></a>
+        <a href="{{ url_for('login') }}"><button>LogOut</button></a>
+
+
+        <div class = "left-head">
+            <form method="get" action="{{ url_for('user_summary', user_id=user_id) }}">
+                <input type="search" name="query" placeholder="Search..." required>
+                <button type="submit">Search</button>
+            </form>
+            <h4>Welcome {{user.full_name}}</h4>
+
+        </div>
+    </div>
+
+        <div class="user-info">
+            <h3>User Information</h3>
+            <p><strong>Name:</strong> {{ user.full_name }}</p>
+            <p><strong>Email:</strong> {{ user.email }}</p>
+            <p><strong>Qualification:</strong> {{ user.qualification }}</p>
+            <p><strong>Date of Birth:</strong> {{ user.dob }}</p>
+        </div>
+    
+        <div class="quizzes">
+            <h3>Available Quizzes</h3>
+            <ul>
+                {% for quiz in quizzes %}
+    
+                    <li>
+                        <strong>{{ quiz.quiz_name }}</strong><br>
+                        <strong>Date:</strong> {{ quiz.date_of_quiz }}<br>
+                        <strong>Duration:</strong> {{ quiz.time_duration }} minutes<br>
+                        <strong>Total Marks:</strong> {{ quiz_total_marks[quiz.quiz_id] }}<br>
+                        <a href="{{ url_for('start_quiz', quiz_id=quiz.quiz_id, user_id=user_id) }}">
+                            <button>Start Quiz</button>
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    
+    
+    
+</body>
+</html>

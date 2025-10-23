@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ quiz.quiz_name }}</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/admin.css">
+    <style>
+        .question { display: none; }
+        .active { display: block; }
+        .navigation { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div id="quiz-data" data-time-duration="{{ time_duration * 60 if time_duration else 60 }}"></div>
+
+    <div class="header">
+        <a href="{{ url_for('user_detail', user_id=user_id) }}"><button>Home</button></a>
+        <a href="{{ url_for('scores', user_id=user_id) }}"><button>Scores</button></a>
+        <a href="{{ url_for('user_summary', user_id=user_id) }}"><button>Summary</button></a>
+    </div>
+    <h1>{{ quiz.quiz_name }}</h1>
+    <div id="timer">Time Remaining: {{ time_duration }}:00</div>
+
+    <form method="POST" action="{{ url_for('submit_quiz', quiz_id=quiz.quiz_id, user_id=user.user_id) }}">
+        {% for question in questions %}
+        <div class="question {% if loop.first %}active{% endif %}">
+            <h3>{{ question.question_statement }}</h3>
+            {% for option in [question.option_1, question.option_2, question.option_3, question.option_4] %}
+            <label>
+                <input type="radio" name="question_{{ question.question_id }}" value="{{ loop.index }}">
+                {{ option }}
+            </label><br>
+            {% endfor %}
+        </div>
+        {% endfor %}
+
+        <div class="navigation">
+            <button type="button" onclick="navigate(-1)">Previous</button>
+            <button type="button" onclick="navigate(1)">Next</button>
+            <button type="submit" id="submit-btn" style="display: none;">Submit Quiz</button>
+        </div>
+    </form>
+
+    <script>
+        // Get time duration from HTML data attribute
+        const quizData = document.getElementById('quiz-data');
+        let timeLeft = parseInt(quizData.dataset.timeDuration, 10);
+
+        let currentQuestion = 0;
+        const questions = document.querySelectorAll('.question');
+        const submitBtn = document.getElementById('submit-btn');
+        const timerElement = document.getElementById('timer');
+        
+        function navigate(direction) {
+            // Validate current question
+            const inputs = questions[currentQuestion].querySelectorAll('input');
+            const isAnswered = Array.from(inputs).some(input => input.checked);
+            
+            if (direction === 1 && !isAnswered) {
+                alert('Please select an answer before proceeding.');
+                return;
+            }
+
+            questions[currentQuestion].classList.remove('active');
+            currentQuestion += direction;
+
+            if (currentQuestion < 0) currentQuestion = 0;
+            if (currentQuestion >= questions.length) currentQuestion = questions.length - 1;
+
+            questions[currentQuestion].classList.add('active');
+            
+            // Update button visibility
+            submitBtn.style.display = (currentQuestion === questions.length - 1) ? 'inline-block' : 'none';
+        }
+
+        // Timer functionality
+        const timerInterval = setInterval(() => {
+            timeLeft--;
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            timerElement.textContent = `Time Remaining: ${minutes}:${seconds.toString().padStart(2, '0')}`;
+            
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                document.querySelector('form').submit();
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
